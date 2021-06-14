@@ -1,1 +1,3 @@
-# Minha primeira aplicação utilizando ReactJS!
+# Minha primeira aplicação utilizando ReactJS!<br>
+
+Banco utilizado: MySQL
