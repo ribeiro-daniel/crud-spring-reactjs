@@ -15,7 +15,6 @@ export default (props) => (
         <RoutesPrivate exact path="/" component={Home} />
         <RoutesPrivate exact path="/users" component={User} />
         <Route path="/login" component={Login} />
-        <Redirect from="*" to="/login" />
       </Switch>
     </BrowserRouter>
   </StoreProvider>

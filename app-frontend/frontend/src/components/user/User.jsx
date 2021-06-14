@@ -30,10 +30,19 @@ const initialState = {
 export default class UserCrud extends Component {
   state = { ...initialState };
 
+  /*
+  * Limpa formulário ao clicar em 'Cancelar'...
+  * ... Resetando os valores iniciais para os campos
+  */
   clear() {
     this.setState({ user: initialState.user });
   }
 
+  /*
+  * Faz requisição à api e seta os dados da resposta nas variáveis
+  * Recebe o número de uma página como parâmetro e traz os dados dessa
+  * página
+  */
   componentWillMount(page) {
     axios
       .get(
@@ -47,6 +56,12 @@ export default class UserCrud extends Component {
         this.setState({ limit: resp.data["size"] });
         this.setState({ totalPages: resp.data["totalPages"] });
 
+        /*
+        * Percorre o total de páginas retornadas na resposta e
+        * seta o total de páginas retornadas para a lista pages[]
+        * Cada vez que uma nova página é inserida, o componente carregará
+        * automaticamente
+        */
         const arrayPages = [];
         for (let i = 0; i <= this.state.totalPages - 1; i++) {
           arrayPages.push(i);
@@ -55,12 +70,21 @@ export default class UserCrud extends Component {
       });
   }
 
+
+  /*
+   *  Faz a requisição sempre que o valor do input  
+   *  for atualizado
+  */
   componentDidUpdate() {
     if (this.state.inputValue !== "") {
       this.fetchData();
     }
   }
 
+  /*
+  * Faz uma requisição à api passando o valor do input como parâmetro
+  * Seta os dados retornados para a list[]
+  */
   fetchData = () => {
     fetch(`${baseUrl}/name?name=${this.state.inputValue}`)
       .then((resp) => {
@@ -74,6 +98,10 @@ export default class UserCrud extends Component {
       });
   };
 
+  /*
+  * Pega o estado atual do user e se ele tiver um ID, atualiza, se não
+  * salva um novo registro e atualiza a lista
+  */
   save() {
     const user = this.state.user;
     const method = user.id ? "put" : "post";
@@ -84,10 +112,17 @@ export default class UserCrud extends Component {
     });
   }
 
+
+  /*
+  * Recebe um objeto usuário e atualiza o estado
+  */
   load(user) {
     this.setState({ user });
   }
 
+  /*
+  * Exclui um registro e atualiza a lista
+  */
   remove(user) {
     axios.delete(`${baseUrl}/${user.id}`).then((resp) => {
       const list = this.getUpdatedList(user, false);
@@ -95,6 +130,13 @@ export default class UserCrud extends Component {
     });
   }
 
+
+  /*
+  * Componente que renderiza a paginação passando uma page por parâmetro
+  * Quando o usuário clicar em uma determinada página
+  * o componentWillMount será chamado e carregará os registros contidos
+  * na página
+  */
   renderPagination() {
     return this.state.pages.map((page) => {
       return (
@@ -109,6 +151,10 @@ export default class UserCrud extends Component {
     });
   }
 
+  /*
+  * Renderiza o campo de busca
+  * Captura o valor digitado no campo
+  */
   renderInputSearch() {
     return (
       <div>
@@ -122,6 +168,15 @@ export default class UserCrud extends Component {
     );
   }
 
+
+  /*
+  * Renderiza a tabela com os dados e paginação
+  * O botão de voltar só é renderizado se a página atual for
+  * maior do que 0
+  * 
+  * O botão de próximo só é renderizado se a página atual for menor 
+  * que o total de páginas - 1
+  */
   renderTable() {
     return (
       <Table striped bordered hover size="sm">
@@ -163,6 +218,10 @@ export default class UserCrud extends Component {
       </Table>
     );
   }
+  
+  /*
+  * Carrega os dados retornados do banco nas linhas da tabela
+  */
   renderRows() {
     return this.state.list.map((user) => {
       return (
@@ -190,6 +249,10 @@ export default class UserCrud extends Component {
     });
   }
 
+  /*
+  * Se o usuário for diferente do usuário passado por parâmetro
+  * a lista é atualizada e o usuário é adicionado
+  */
   getUpdatedList(user, add = true) {
     const list = this.state.list.filter((u) => u.id !== user.id);
     if (add) list.unshift(user);
@@ -202,6 +265,10 @@ export default class UserCrud extends Component {
     this.setState({ user });
   }
 
+
+  /*
+  * Formulário de cadastro
+  */
   renderForm() {
     return (
       <div className="form">
