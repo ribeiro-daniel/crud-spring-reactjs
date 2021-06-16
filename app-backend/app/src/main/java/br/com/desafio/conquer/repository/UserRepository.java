@@ -10,6 +10,6 @@ import br.com.desafio.conquer.model.UserModel;
 
 @Repository
 public interface UserRepository extends PagingAndSortingRepository<UserModel, Long>{
-	@Query("SELECT u FROM UserModel u WHERE u.name = ?1")
+	@Query("SELECT u FROM UserModel u WHERE u.name LIKE %?1%")
 	public List<UserModel> findByName(String name);
 }
